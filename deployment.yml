@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biryani-webserver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: biryani-webserver
+  template:
+    metadata:
+      labels:
+        app: biryani-webserver
+    spec:
+      containers:
+      - name: biryani-webserver
+        image: shahidkhan777/biryani-webserver:latest  # Docker image from Docker Hub
+        ports:
+        - containerPort: 4000  # Updated port exposed by the Node.js app (changed from 3000 to 4000)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: biryani-webserver-service
+spec:
+  type: NodePort  # Changed the service type to NodePort to expose the service on a specific port
+  ports:
+    - port: 80             # The port on which the service will be accessible
+      targetPort: 4000      # Updated target port to match the container port (4000)
+      nodePort: 30007       # Exposing the service on NodePort (external port), this is the port to access from outside
+  selector:
+    app: biryani-webserver
